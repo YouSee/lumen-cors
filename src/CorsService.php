@@ -14,6 +14,8 @@ class CorsService implements CorsServiceContract
      */
     private $allowOrigins = [];
 
+    private $allowOriginsRegExp = false;
+
     /**
      * Allowed HTTP methods.
      *
@@ -151,6 +153,10 @@ class CorsService implements CorsServiceContract
             } else {
                 foreach ($config['allowOrigins'] as $origin) {
                     $this->allowOrigin($origin);
+                }
+                // Build a single regexp for matching
+                if ( isset($config['allowOriginsRegExp']) && $config['allowOriginsRegExp'] ) {
+                    $this->allowOriginsRegExp = "/^(" . implode('|', $this->allowOrigins) . ")$/";
                 }
             }
         }
@@ -295,6 +301,9 @@ class CorsService implements CorsServiceContract
      */
     protected function isOriginAllowed($origin)
     {
+        if ($this->allowOriginsRegExp) {
+            return (preg_match($this->allowOriginsRegExp, $origin) == 1);
+        }
         return $this->allowOrigins === true ?: in_array($origin, $this->allowOrigins);
     }
 
