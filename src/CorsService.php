@@ -156,7 +156,7 @@ class CorsService implements CorsServiceContract
                 }
                 // Build a single regexp for matching
                 if ( isset($config['allowOriginsRegExp']) && $config['allowOriginsRegExp'] ) {
-                    $this->allowOriginsRegExp = "/^(" . implode('|', $this->allowOrigins) . ")$/";
+                    $this->allowOriginsRegExp = "/^(?:" . implode('|', $this->allowOrigins) . ")$/";
                 }
             }
         }
