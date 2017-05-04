@@ -96,20 +96,16 @@ class CorsService implements CorsServiceContract
     public function corsHeaders(Request $request) {
         $headers = [];
 
-        //$response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
         $headers['Access-Control-Allow-Origin'] = $request->headers->get('Origin');
 
         $vary = $request->headers->has('Vary') ? $request->headers->get('Vary') . ', Origin' : 'Origin';
-        //$response->headers->set('Vary', $vary);
         $headers['Vary'] = $vary;
 
         if ($this->allowCredentials) {
-            //$response->headers->set('Access-Control-Allow-Credentials', 'true');
             $headers['Access-Control-Allow-Credentials'] =  'true';
         }
 
         if ($this->exposeHeaders) {
-            //$response->headers->set('Access-Control-Expose-Headers', implode(', ', $this->exposeHeaders));
             $headers['Access-Control-Expose-Headers'] = implode(', ', $this->exposeHeaders);
         }
 
