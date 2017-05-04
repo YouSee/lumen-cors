@@ -49,6 +49,12 @@ class CorsMiddleware
 			return new Response(static::CORS_REQUEST_NOT_ALLOWED, 403);
 		}
 
+		/**
+         * we need to extract and store the CORS headers if something further down the chain fails and we won't
+         * come back. Adding the CORS headers is the last thing we do...
+         */
+		$this->service->corsHeaders($request);
+
 		return $this->service->handleRequest($request, $next($request));
 	}
 }

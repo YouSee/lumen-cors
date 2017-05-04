@@ -56,4 +56,11 @@ interface CorsService
      */
     public function isRequestAllowed(Request $request);
 
+    /**
+     * Stores the relevant CORS headers according to configuration settings and the Request object.
+     * The fields are stored in the Request objects ParameterBag $attribute under the 'x-sentry-cors-headers' key
+     *
+     * @param Request $request
+     */
+    public function corsHeaders(Request $request);
 }
