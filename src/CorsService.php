@@ -121,9 +121,6 @@ class CorsService implements CorsServiceContract
      */
     public function handleRequest(Request $request, Response $response)
     {
-        if (empty($request->attributes->get('x-sentry-cors-headers'))) {
-            $this->corsHeaders($request);
-        }
         $headers = $request->attributes->get('x-sentry-cors-headers');
         foreach($headers as $header => $value) {
             $response->headers->set($header, $value);
