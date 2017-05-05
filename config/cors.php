@@ -8,10 +8,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | Indicates which origins are allowed to perform requests.
+    | 'allowOriginsRegExp' is a boolean that if set to true enables RegExp
+    | support for 'allowOrigins'.
     |
     */
 
-    'allowOrigins'     => [],
+    'allowOriginsRegExp' => false,
+    'allowOrigins'       => [],
 
     /*
     |--------------------------------------------------------------------------

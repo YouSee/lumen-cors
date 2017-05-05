@@ -159,6 +159,7 @@ class CorsServiceTest extends \Codeception\TestCase\Test
 
         $this->specify('response origin header is set', function () {
             $this->request->headers->set('Origin', 'http://foo.com');
+            $this->service->corsHeaders($this->request);
 
             $response = $this->service->handleRequest($this->request, $this->response);
 
@@ -172,6 +173,7 @@ class CorsServiceTest extends \Codeception\TestCase\Test
         $this->specify('response vary header is set', function () {
             $this->request->headers->set('Origin', 'http://foo.com');
             $this->request->headers->set('Vary', 'Accept-Encoding');
+            $this->service->corsHeaders($this->request);
 
             $response = $this->service->handleRequest($this->request, $this->response);
 
@@ -187,6 +189,7 @@ class CorsServiceTest extends \Codeception\TestCase\Test
 
         $this->specify('response credentials header is set', function () {
             $this->request->headers->set('Origin', 'http://foo.com');
+            $this->service->corsHeaders($this->request);
 
             $response = $this->service->handleRequest($this->request, $this->response);
 
@@ -202,6 +205,7 @@ class CorsServiceTest extends \Codeception\TestCase\Test
 
         $this->specify('response expose headers header is set', function () {
             $this->request->headers->set('Origin', 'http://foo.com');
+            $this->service->corsHeaders($this->request);
 
             $response = $this->service->handleRequest($this->request, $this->response);
 

@@ -14,6 +14,8 @@ class CorsService implements CorsServiceContract
      */
     private $allowOrigins = [];
 
+    private $allowOriginsRegExp = false;
+
     /**
      * Allowed HTTP methods.
      *
@@ -88,25 +90,37 @@ class CorsService implements CorsServiceContract
         return $this->createPreflightResponse($request);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function corsHeaders(Request $request) {
+        $headers = [];
+
+        $headers['Access-Control-Allow-Origin'] = $request->headers->get('Origin');
+
+        $vary = $request->headers->has('Vary') ? $request->headers->get('Vary') . ', Origin' : 'Origin';
+        $headers['Vary'] = $vary;
+
+        if ($this->allowCredentials) {
+            $headers['Access-Control-Allow-Credentials'] =  'true';
+        }
+
+        if ($this->exposeHeaders) {
+            $headers['Access-Control-Expose-Headers'] = implode(', ', $this->exposeHeaders);
+        }
+
+        $request->attributes->set('x-sentry-cors-headers', $headers);
+    }
 
     /**
      * @inheritdoc
      */
     public function handleRequest(Request $request, Response $response)
     {
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
-
-        $vary = $request->headers->has('Vary') ? $request->headers->get('Vary') . ', Origin' : 'Origin';
-        $response->headers->set('Vary', $vary);
-
-        if ($this->allowCredentials) {
-            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        $headers = $request->attributes->get('x-sentry-cors-headers');
+        foreach($headers as $header => $value) {
+            $response->headers->set($header, $value);
         }
-
-        if ($this->exposeHeaders) {
-            $response->headers->set('Access-Control-Expose-Headers', implode(', ', $this->exposeHeaders));
-        }
-
         return $response;
     }
 
@@ -151,6 +165,10 @@ class CorsService implements CorsServiceContract
             } else {
                 foreach ($config['allowOrigins'] as $origin) {
                     $this->allowOrigin($origin);
+                }
+                // Build a single regexp for matching
+                if ( isset($config['allowOriginsRegExp']) && $config['allowOriginsRegExp'] ) {
+                    $this->allowOriginsRegExp = "/^(?:" . implode('|', $this->allowOrigins) . ")$/";
                 }
             }
         }
@@ -295,6 +313,9 @@ class CorsService implements CorsServiceContract
      */
     protected function isOriginAllowed($origin)
     {
+        if ($this->allowOriginsRegExp) {
+            return (preg_match($this->allowOriginsRegExp, $origin) == 1);
+        }
         return $this->allowOrigins === true ?: in_array($origin, $this->allowOrigins);
     }
 
